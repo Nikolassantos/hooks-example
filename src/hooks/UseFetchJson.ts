@@ -1,36 +1,38 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 interface P {
-    url: string
-    method?: string
+  url: string;
+  method?: string;
 }
 
 interface F {
-    data: any
-    loading: boolean
+  data: IData[];
+  loading: boolean;
 }
 
-export function useFetchJson({ url, method = 'GET' }: P): F {
-    console.log({ url, method })
+interface IData {
+  nome: string;
+  sigla: string;
+}
 
-    const [response, setResponse] = useState({
-        data: null,
-        loading: true,
-    })
+export function useFetchJson(url: string, method = 'GET'): F {
+  const [response, setResponse] = useState({
+    data: [],
+    loading: true,
+  });
 
-    useEffect(
-        function () {
-            fetch(url, { method: method })
-                .then((resp) => resp.json())
-                .then((json) =>
-                    setResponse({
-                        data: json,
-                        loading: false,
-                    })
-                )
-        },
-        [url, method]
-    )
+  function fetchData() {
+    fetch(url, { method: method })
+      .then((resp) => resp.json())
+      .then((json) =>
+        setResponse({
+          data: json,
+          loading: false,
+        })
+      );
+  }
 
-    return response
+  useEffect(fetchData, [url, method]);
+
+  return response;
 }
